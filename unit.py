@@ -8,7 +8,7 @@ conn = sqlite3.connect("conversions.db", check_same_thread=False)
 
 
 cursor = conn.cursor()
-cursor.execute("DELETE FROM history")
+
 cursor.execute('''CREATE TABLE IF NOT EXISTS history (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     input_value FLOAT,
@@ -16,6 +16,11 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS history (
                     to_unit TEXT,
                     result FLOAT)''')
 conn.commit()
+
+if "page_loaded" not in st.session_state:
+    st.session_state.page_loaded = True  # Mark session as loaded
+    cursor.execute("DELETE FROM history")  # Clear history only on full reload
+    conn.commit()
 
 # Main Page
 st.title("⚡ Unit Converter")
